@@ -22,20 +22,42 @@ def read_input_file(file_path):
         return False, None
 
 
-def add_new_sheet(df, finished_product, level, quantity=1, unit="Pc"):
-    print(f"Creating sheet for product : {finished_product}")
+def get_item_index(list,level):
+    matched_idex = []
+    has_nested_data  = False
+    for idx,each_item in enumerate(list):
+        # print(f"Each item is  {each_item}")
+        # print(each_item[0])
+        if level == int(str(each_item[0]).replace(".", "")):
+            # print(f"Same level  at index {idx}")
+            matched_idex.append(idx)
+        elif level < int(str(each_item[0]).replace(".", "")):
+            # print(f"found a nested level {level}  < {each_item[0]} at  index  {idx}")
+            has_nested_data = True
+    return matched_idex,has_nested_data
 
-    # create a new df with first line as data provided and second line as all data which has level = level
-    print(df)
-    df_print = pd.DataFrame(
-        {"Level": [level - 1], "Raw material": [finished_product], "Quantity": [quantity], "Unit": [unit]})
-    print(df_print)
-    for i in range(len(df)):
-        if level == int(str(df.iloc[i, 0]).replace(".", "")):
-            # print(df.iloc[i])
-            df_print[len(df)] = [level-1,[df.iloc[i,1]], [df.iloc[i,2]],[df.iloc[i,3]]]
 
+def dump_sheet_data(data,level,index_list,finished_good):
+    print(data,level,index_list,finished_good)
+    # wait  = input("Check data bofeo print  ")
+    print(f"Printing data for {level} with index  {index_list}")
+    if level == 1:
+        print("Printing data for first level ")
+        print(f"Creating new sheet for {finished_good}")
+        for index  in index_list:
+            print(data[index])
 
+    else:
+        print(f"print data for level {level}")
+        prev_index = -99
+        for index in index_list:
+            if prev_index+1 == index:
+                # print("data is continues now printing data")
+                print(data[index])
+            else:
+                print(f"creating new sheet for {data[index-1][1]}")
+                print(data[index])
+                prev_index = index
 
 def main():
     # hard code input file for now
@@ -50,11 +72,18 @@ def main():
     print(file_content)
     # Divide data frame based on item
     items = set(file_content.index.values)
-    for item in items:
+    for idx, item in enumerate(items):
+        finished_good  = item
         list = file_content.loc[item].values.tolist()
-        new_data = file_content.loc[item]
-        # print(new_data)
-        add_new_sheet(df=new_data, finished_product=item, level=1)
+        # print(list,idx)
+        level = 1
+        has_more_level = True
+        while has_more_level:
+            print(f"Data for level {level}")
+            index_list,has_more_level = get_item_index(list,level)
+            print(f"indx list is  {index_list}")
+            dump_sheet_data(list,level,index_list,finished_good= finished_good)
+            level +=1
 
 
 if __name__ == '__main__':
