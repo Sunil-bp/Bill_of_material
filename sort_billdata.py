@@ -26,11 +26,8 @@ def read_input_file(file_path):
 
 def get_item_index(list, level):
     '''
-    get the idex of all items which has same level of nesting
+    Get the index of all items which has same level of nesting
     also return data on further nesting is there or not
-    :param list:
-    :param level:
-    :return:
     '''
     matched_index = []
     has_nested_data = False
@@ -38,7 +35,7 @@ def get_item_index(list, level):
         if level == int(str(each_item[0]).replace(".", "")):
             matched_index.append(idx)
         elif level < int(str(each_item[0]).replace(".", "")):
-            # Used to check is data has a nesting greater than the level
+            # Used to check if data has a nesting greater than the current level
             has_nested_data = True
     return matched_index, has_nested_data
 
@@ -48,6 +45,7 @@ def get_sheet_data(data, level, index_list, workbook, finished_good):
         print_data = []
         for index in index_list:
             print_data.append(data[index])
+        #Save first level
         dump_sheet_data(workbook, print_data, finished_good, 1, "Pc")
 
     else:
@@ -63,7 +61,6 @@ def get_sheet_data(data, level, index_list, workbook, finished_good):
                     # Save  previous data
                     dump_sheet_data(workbook, print_data, finished_good, quantity, unit)
                     print_data = []
-
                 finished_good = data[index - 1][1]
                 quantity = data[index - 1][2]
                 unit = data[index - 1][3]
