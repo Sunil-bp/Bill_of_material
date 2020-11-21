@@ -75,21 +75,27 @@ def get_sheet_data(data, level, index_list, workbook, finished_good):
 
 
 def dump_sheet_data(workbook, data, finishd_product, quantity, unit):
+    data_format1 = workbook.add_format({'bg_color': '#FFFF00',"border":1})
+    df_border_blue  = workbook.add_format({"border":5,"bg_color":"0000FF"})
+    df_border_bottom  = workbook.add_format({"bottom":5})
     worksheet = workbook.add_worksheet(finishd_product)
     worksheet.write_row(0, 0, ["Finished Good List"])
-    worksheet.write_row(1, 0, ["#", "Item Description", "Quantity", "Unit"])
-    worksheet.write_row(2, 0, ["1", finishd_product, quantity, unit])
-    worksheet.write_row(3, 0, ["End of FG"])
+    worksheet.write_row(1, 0, ["#", "Item Description", "Quantity", "Unit"],cell_format=df_border_blue)
+    worksheet.write_row(2, 0, ["1"])
+    worksheet.write_row(2, 1, [finishd_product, quantity, unit],cell_format=data_format1)
+
+    worksheet.write_row(3, 0, ["End of FG","","",""],cell_format=df_border_bottom)
     worksheet.write_row(4, 0, ["Raw Material list"])
-    worksheet.write_row(5, 0, ["#", "Item Description", "Quantity", "Unit"])
+    worksheet.write_row(5, 0, ["#", "Item Description", "Quantity", "Unit"],cell_format=df_border_blue)
     row = 6
     number = 1
     for each_data in data:
-        worksheet.write_row(row, 0, [number, each_data[1], each_data[2], each_data[3]])
+        worksheet.write_row(row, 0, [number])
+        worksheet.write_row(row, 1, [ each_data[1], each_data[2], each_data[3]],cell_format=data_format1)
         row += 1
         number += 1
     worksheet.write_row(row, 0, ["End of RM"])
-
+    worksheet.set_column(0, row, 30)
 
 def main():
     # hard code input file for now
